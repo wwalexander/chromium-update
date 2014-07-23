@@ -4,22 +4,13 @@ $chrdir = "$pwd"
 # stop immediately if an error occurs
 $erroractionpreference = "stop"
 
-# which architecture to download the builds for
-if ($env:processor_architecture -eq "AMD64") {
-	$urlpath = "Win_x64"
-}
-# 32-bit
-else {
-	$urlpath = "Win"
-}
-
 # allows web queries
 $client = new-object system.net.webclient
 
 echo "Querying remote version..."
 
 # contains the latest build number
-$remote = $client.downloadstring("https://commondatastorage.googleapis.com/chromium-browser-continuous/$urlpath/LAST_CHANGE")
+$remote = $client.downloadstring("https://commondatastorage.googleapis.com/chromium-browser-snapshots/Win/LAST_CHANGE")
 
 echo "Remote version is $remote"
 
@@ -48,7 +39,7 @@ else {
 if ($ood) {
 	echo "Downloading remote version..."
 
-	$client.downloadfile("https://commondatastorage.googleapis.com/chromium-browser-continuous/$urlpath/$remote/mini_installer.exe", "$chrdir\mini_installer.exe")
+	$client.downloadfile("https://commondatastorage.googleapis.com/chromium-browser-snapshots/Win/$remote/mini_installer.exe", "$chrdir\mini_installer.exe")
 
 	echo "Installing new version..."
 
