@@ -26,7 +26,7 @@ if (test-path $chrdir\ver.txt) {
 	echo "Local version is $local"
 
 	# cast as int so a random string won't count as greater than the remote number
-	if ($remote -gt $local -as [int]) {
+	if ($remote -ne $local -as [int]) {
 		$ood = 1
 	}
 }
