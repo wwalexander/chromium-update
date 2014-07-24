@@ -7,23 +7,23 @@ $erroractionpreference = "stop"
 # allows web queries
 $client = new-object system.net.webclient
 
-echo "Querying remote version..."
+write-output "Querying remote version..."
 
 # contains the latest build number
 $remote = $client.downloadstring("https://commondatastorage.googleapis.com/chromium-browser-snapshots/Win/LAST_CHANGE")
 
-echo "Remote version is $remote"
+write-output "Remote version is $remote"
 
 # this sentinel is changed if we find that the local version is out of date
 $ood = 0
 
 # if the persistent file exists
 if (test-path $chrdir\ver.txt) {
-	echo "Querying local version..."
+	write-output "Querying local version..."
 
 	$local = get-content $chrdir\ver.txt
 
-	echo "Local version is $local"
+	write-output "Local version is $local"
 
 	# cast as int so a random string won't count as greater than the remote number
 	if ($remote -ne $local -as [int]) {
@@ -31,25 +31,32 @@ if (test-path $chrdir\ver.txt) {
 	}
 }
 else {
-	echo "No local version cache found"
+	write-output "No local version cache found"
 
 	$ood = 1
 }
 
 if ($ood) {
-	echo "Downloading remote version..."
+	write-output "Downloading remote version..."
 
 	$client.downloadfile("https://commondatastorage.googleapis.com/chromium-browser-snapshots/Win/$remote/mini_installer.exe", "$chrdir\mini_installer.exe")
 
-	echo "Installing new version..."
+	write-output "Installing new version..."
 
 	# run installer; it works in the background
 	& $chrdir\mini_installer.exe
 
-	echo "Updating local version cache..."
+	write-output "Updating local version cache..."
 
 	# we've installed the remote version; update the cache accordingly
 	$remote | set-content $chrdir\ver.txt
 }
 
-echo "Local version is up to date"
+write-output "Local version is up to date"
+
+write-output ""
+
+write-host "Press any key to exit..."
+
+# wait for the user to press a key before exiting, so the program's output can be read
+$outputsuppress = $host.ui.rawui.readkey("noecho,includekeydown")
