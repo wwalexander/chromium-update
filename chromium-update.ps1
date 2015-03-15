@@ -33,11 +33,13 @@ else {
 	$ood = 1
 }
 
+$fname = "mini_installer.exe"
+
 if ($ood) {
 	write-output "Downloading remote version..."
-	$client.downloadfile($url + "/" + $remote + "/mini_installer.exe", "$chrdir\mini_installer.exe")
+	$client.downloadfile($url + "/" + $remote + "/$fname", "$chrdir\$fname")
 	write-output "Installing new version..."
-	& $chrdir\mini_installer.exe
+	& $chrdir\$fname
 	write-output "Updating local version cache..."
 	$remote | set-content $chrdir\ver.txt
 }
