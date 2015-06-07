@@ -32,7 +32,7 @@ if ($ood) {
 	Write-Output "Downloading remote version..."
 	$client.DownloadFile($url + "/" + $remote + "/$fname", "$fname")
 	Write-Output "Installing new version..."
-	& $fname
+	& "./$fname"
 	Write-Output "Updating local version cache..."
 	$remote | Set-Content ver.txt
 }
