@@ -1,47 +1,40 @@
-$chrdir = "$env:APPDATA\chromium-update"
-
-if (-not (test-path $chrdir)) {
-	new-item "$chrdir" -type directory
-}
-
 $erroractionpreference = "stop"
 $url = "https://commondatastorage.googleapis.com/chromium-browser-continuous/"
 
-if ($env:processor_architecture -eq "AMD64") {
+if ($env:PROCESSOR_ARCHITECTURE -eq "AMD64") {
 	$url += "Win_x64"
 } else {
 	$url += "Win"
 }
 
-$client = new-object system.net.webclient
-write-output "Querying remote version..."
-$remote = $client.downloadstring($url + "/LAST_CHANGE")
+$client = New-Object System.Net.WebClient
+Write-Output "Querying remote version..."
+$remote = $client.DownloadString($url + "/LAST_CHANGE")
 write-output "Remote version is $remote"
 $ood = 0
 
-if (test-path $chrdir\ver.txt) {
-	write-output "Querying local version..."
-	$local = get-content $chrdir\ver.txt
-	write-output "Local version is $local"
+if (Test-Path ver.txt) {
+	Write-Output "Querying local version..."
+	$local = Get-Content ver.txt
+	Write-Output "Local version is $local"
 
 	if ($remote -ne $local -as [int]) {
 		$ood = 1
 	}
-}
-else {
-	write-output "No local version cache found"
+} else {
+	Write-Output "No local version cache found"
 	$ood = 1
 }
 
 $fname = "mini_installer.exe"
 
 if ($ood) {
-	write-output "Downloading remote version..."
-	$client.downloadfile($url + "/" + $remote + "/$fname", "$chrdir\$fname")
-	write-output "Installing new version..."
-	& $chrdir\$fname
-	write-output "Updating local version cache..."
-	$remote | set-content $chrdir\ver.txt
+	Write-Output "Downloading remote version..."
+	$client.DownloadFile($url + "/" + $remote + "/$fname", "$fname")
+	Write-Output "Installing new version..."
+	& $fname
+	Write-Output "Updating local version cache..."
+	$remote | Set-Content ver.txt
 }
 
-write-output "Local version is up to date"
+Write-Output "Local version is up to date"
